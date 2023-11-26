@@ -2,6 +2,8 @@ package main
 
 import (
 	"beta/internal/handler"
+	repository "beta/internal/repositories"
+	service "beta/internal/services"
 	"beta/pkg/config"
 	"beta/pkg/database"
 	"beta/pkg/reader"
@@ -14,7 +16,7 @@ func main() {
 	envReader := reader.GetEnvReader()
 
 	serverConfig := config.ServerConfig{
-		Port: envReader.Get("PORT"),
+		Port: envReader.Get("HTTP_PORT"),
 	}
 
 	databaseConfig := config.DatabaseConfig{
@@ -28,8 +30,10 @@ func main() {
 	ctx := context.Background()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
 
-	handlers := new(handler.Handler)
-	// вынес в анонимную функцию, так как нельзя написать if сразу после go
+	repositories := repository.NewRepository()
+	services := service.NewService(repositories)
+	handlers := handler.NewHandler(services)
+
 	go func() {
 		if err := srv.Run(conf.Server.Port, handlers.InitRoutes()); err == nil {
 			log.Fatalf("server error %s", err.Error())

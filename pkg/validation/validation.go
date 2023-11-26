@@ -16,7 +16,7 @@ func GetErrors(errorList validator.ValidationErrors) map[string]string {
 		if f.Param() != "" {
 			err = fmt.Sprintf("%s=%s", err, f.Error())
 		}
-		errs[f.Field()] = dictionary.Get(err, "ddddd")
+		errs[f.Field()] = dictionary.Get(err, err)
 	}
 
 	return errs

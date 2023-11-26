@@ -10,22 +10,24 @@ import (
 	"net/http"
 )
 
-func (h *Handler) voting(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
+func (h *Handler) voting(ctx *gin.Context) {
+	ctx.Header("Content-Type", "application/json")
 
-	var input request.Vote
-	if err := c.ShouldBind(&input); err != nil {
+	// Валидация
+	input := request.Vote{}
+	if err := ctx.ShouldBind(&input); err != nil {
 		if errors.Is(err, io.EOF) {
-			response.ErrorResponse(c, http.StatusBadRequest, "request body is empty")
-			return
+			response.ErrorResponse(ctx, http.StatusBadRequest, "request body is empty")
 		}
 
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
-			response.ValidationErrorResponse(c, verr)
-			return
+			response.ValidationErrorResponse(ctx, verr)
 		}
-	}
 
-	c.JSON(http.StatusOK, response.ResponseOk{Message: "ok"})
+		return
+	}
+	go h.services.CreateVoting(&input)
+
+	ctx.JSON(http.StatusOK, response.ResponseOk{Message: "ok"})
 }
