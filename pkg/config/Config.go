@@ -5,12 +5,8 @@ type ServerConfig struct {
 }
 
 type DatabaseConfig struct {
-	Connection   string
-	Host         string
-	Port         string
-	DatabaseName string
-	User         string
-	Password     string
+	Host string
+	Port string
 }
 
 type Config struct {

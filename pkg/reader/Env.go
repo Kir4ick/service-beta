@@ -12,7 +12,8 @@ const projectDirName = "beta"
 type Env struct {
 }
 
-func (env *Env) NewEnv() *Env {
+func GetEnvReader() *Env {
+	env := new(Env)
 	env.loadEnv()
 	return env
 }
