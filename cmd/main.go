@@ -1,6 +1,7 @@
 package main
 
 import (
+	"beta/internal/handler"
 	"beta/pkg/config"
 	"beta/pkg/database"
 	"beta/pkg/reader"
@@ -27,12 +28,13 @@ func main() {
 	ctx := context.Background()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
 
+	handlers := new(handler.Handler)
 	// вынес в анонимную функцию, так как нельзя написать if сразу после go
-	go func(conf *config.Config) {
-		if err := srv.Run(conf.Server.Port); err == nil {
+	go func() {
+		if err := srv.Run(conf.Server.Port, handlers.InitRoutes()); err == nil {
 			log.Fatalf("server error %s", err.Error())
 		}
-	}(conf)
+	}()
 
 	shutdown(&ctx, srv, databaseConnect)
 }

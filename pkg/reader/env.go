@@ -7,7 +7,7 @@ import (
 	"regexp"
 )
 
-const projectDirName = "beta"
+const ProjectDirName = "beta"
 
 type Env struct {
 }
@@ -29,7 +29,7 @@ func (env *Env) Get(key string) string {
 }
 
 func (env *Env) loadEnv() {
-	projectName := regexp.MustCompile(`^(.*` + projectDirName + `)`)
+	projectName := regexp.MustCompile(`^(.*` + ProjectDirName + `)`)
 	currentWorkDirectory, _ := os.Getwd()
 	rootPath := projectName.Find([]byte(currentWorkDirectory))
 	err := godotenv.Load(string(rootPath) + `/.env`)
