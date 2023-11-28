@@ -18,13 +18,16 @@ func (h *Handler) voting(ctx *gin.Context) {
 	if err := ctx.ShouldBind(&input); err != nil {
 		if errors.Is(err, io.EOF) {
 			response.ErrorResponse(ctx, http.StatusBadRequest, "request body is empty")
+			return
 		}
 
 		var verr validator.ValidationErrors
 		if errors.As(err, &verr) {
 			response.ValidationErrorResponse(ctx, verr)
+			return
 		}
 
+		response.ErrorResponse(ctx, http.StatusInternalServerError, "server error")
 		return
 	}
 	go h.services.CreateVoting(&input)

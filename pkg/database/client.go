@@ -22,7 +22,6 @@ func Connection(config *config.DatabaseConfig, ctx *context.Context) *DatabaseCl
 	databaseClient := DatabaseClient{client: client}
 
 	err = client.Connect(*ctx)
-
 	if err != nil {
 		log.Fatalf("cannot connect to database %s", err.Error())
 	}
@@ -32,4 +31,8 @@ func Connection(config *config.DatabaseConfig, ctx *context.Context) *DatabaseCl
 
 func (database *DatabaseClient) Disconnect(ctx *context.Context) error {
 	return database.client.Disconnect(*ctx)
+}
+
+func (database *DatabaseClient) GetClient() *mongo.Client {
+	return database.client
 }

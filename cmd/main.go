@@ -24,14 +24,14 @@ func main() {
 		Port: envReader.Get("DB_PORT"),
 	}
 
-	conf := config.NewConfig(&serverConfig, &databaseConfig)
+	conf := config.NewConfig(&serverConfig, &databaseConfig).SetGammaUrl(
+		envReader.Get("GAMMA_SERVICE_URL"))
 	srv := new(server.Server)
 
 	ctx := context.Background()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
-
-	repositories := repository.NewRepository()
-	services := service.NewService(repositories)
+	repositories := repository.NewRepository(databaseConnect)
+	services := service.NewService(repositories, conf, &ctx)
 	handlers := handler.NewHandler(services)
 
 	go func() {
