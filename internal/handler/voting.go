@@ -11,7 +11,6 @@ import (
 )
 
 func (h *Handler) voting(ctx *gin.Context) {
-	ctx.Header("Content-Type", "application/json")
 
 	// Валидация
 	input := request.Vote{}
@@ -30,7 +29,7 @@ func (h *Handler) voting(ctx *gin.Context) {
 		response.ErrorResponse(ctx, http.StatusInternalServerError, "server error")
 		return
 	}
-	go h.services.CreateVoting(&input)
+	go h.services.CreateVoting(h.ctx, &input)
 
-	ctx.JSON(http.StatusOK, response.ResponseOk{Message: "ok"})
+	ctx.JSON(http.StatusOK, response.ResponseOk{Result: "ok"})
 }

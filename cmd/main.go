@@ -7,6 +7,7 @@ import (
 	"beta/pkg/config"
 	"beta/pkg/database"
 	"beta/pkg/reader"
+	"beta/pkg/regulation"
 	"beta/server"
 	"context"
 	"log"
@@ -28,11 +29,13 @@ func main() {
 		envReader.Get("GAMMA_SERVICE_URL"))
 	srv := new(server.Server)
 
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
+
+	requestRegulation := regulation.NewRequestRegulation()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
 	repositories := repository.NewRepository(databaseConnect)
-	services := service.NewService(repositories, conf, &ctx)
-	handlers := handler.NewHandler(services)
+	services := service.NewService(repositories, conf, requestRegulation)
+	handlers := handler.NewHandler(services, &ctx)
 
 	go func() {
 		if err := srv.Run(conf.Server.Port, handlers.InitRoutes()); err == nil {
@@ -40,5 +43,7 @@ func main() {
 		}
 	}()
 
-	shutdown(&ctx, srv, databaseConnect)
+	services.ClearInfoForRequests(requestRegulation)
+
+	shutdown(&ctx, srv, databaseConnect, cancel)
 }

@@ -1,17 +1,21 @@
 package repositories
 
 import (
-	"beta/internal/request"
+	"beta/internal/entity"
 	"beta/pkg/database"
+	"context"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type Voting interface {
-	InsertVote(input request.Vote) (string, error)
+type VotingRepository interface {
+	InsertVoteInVoting(ctx *context.Context, vote entity.Vote, votingId string) (string, error)
+	FindVoting(ctx *context.Context, votingId string) (*entity.Voting, error)
+	InsertNewVoting(ctx *context.Context, vote *entity.Voting) (string, error)
+	GetVotingCountVotes(ctx *context.Context, votingId string) ([]entity.VotesStateCount, error)
+	GetVotesStates(ctx *context.Context, votingId string) ([]entity.VotesStatePercents, error)
 }
 
 type Repository struct {
-	Voting
 	database *mongo.Database
 }
 

@@ -10,11 +10,13 @@ import (
 	"syscall"
 )
 
-func shutdown(ctx *context.Context, srv *server.Server, db *database.DatabaseClient) {
+func shutdown(ctx *context.Context, srv *server.Server, db *database.DatabaseClient, cancel context.CancelFunc) {
 
 	quit := make(chan os.Signal, 1)
 	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
 	<-quit
+
+	defer cancel()
 
 	log.Println("shutdown connect to database")
 	if err := db.Disconnect(ctx); err != nil {

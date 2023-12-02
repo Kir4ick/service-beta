@@ -1,5 +1,5 @@
 package response
 
 type ResponseOk struct {
-	Message string `json:"message"`
+	Result string `json:"result"`
 }

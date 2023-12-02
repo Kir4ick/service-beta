@@ -1,9 +1,9 @@
 package request
 
 type Vote struct {
-	VoteID   string `json:"voteId" binding:"required"`
-	VotingID string `json:"votingId" binding:"required"`
-	OptionID string `json:"optionId" binding:"required"`
+	VoteID   string `json:"voteId" binding:"required,uuid"`
+	VotingID string `json:"votingId" binding:"required,uuid"`
+	OptionID string `json:"optionId" binding:"required,uuid"`
 }
 
 type VotingResult struct {
