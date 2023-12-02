@@ -7,11 +7,11 @@ import (
 )
 
 type Handler struct {
-	services *services.Service
+	services services.IService
 	ctx      *context.Context
 }
 
-func NewHandler(service *services.Service, ctx *context.Context) *Handler {
+func NewHandler(service services.IService, ctx *context.Context) *Handler {
 	return &Handler{services: service, ctx: ctx}
 }
 

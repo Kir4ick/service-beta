@@ -33,7 +33,6 @@ func (s *Service) CreateVoting(ctx *context.Context, input *request.Vote) {
 	beforeInsertVotingState, err := s.repositories.GetVotesStates(ctx, input.VotingID)
 
 	if !s.checkNeedToSendGamma(afterInsertVotingState, beforeInsertVotingState) {
-		log.Println("not send")
 		return
 	}
 
@@ -47,7 +46,7 @@ func (s *Service) checkNeedToSendGamma(
 	//Первым делом проверяем сколько в эту секунду было уже послано запросов, если 2 или больше, то ниче не отправляем
 	now := time.Now()
 	count := s.requestRegulation.GetCountRequestsNow(now)
-	log.Print(count)
+
 	if count >= 2 {
 		s.requestRegulation.ClearInfo(now)
 		return false

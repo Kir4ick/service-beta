@@ -34,7 +34,7 @@ func main() {
 	requestRegulation := regulation.NewRequestRegulation()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
 	var repositories repository.VotingRepository = repository.NewRepository(databaseConnect)
-	services := service.NewService(&repositories, conf, requestRegulation)
+	var services service.IService = service.NewService(repositories, conf, requestRegulation)
 	handlers := handler.NewHandler(services, &ctx)
 
 	go func() {
