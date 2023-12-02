@@ -17,11 +17,11 @@ type GammaStateService interface {
 }
 
 type Service struct {
-	repositories      *repositories.Repository
+	repositories      *repositories.VotingRepository
 	config            *config.Config
 	requestRegulation *regulation.Request
 }
 
-func NewService(repos *repositories.Repository, conf *config.Config, requestRegulation *regulation.Request) *Service {
+func NewService(repos *repositories.VotingRepository, conf *config.Config, requestRegulation *regulation.Request) *Service {
 	return &Service{repos, conf, requestRegulation}
 }
