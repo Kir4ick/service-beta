@@ -22,11 +22,11 @@ type IService interface {
 }
 
 type Service struct {
-	repositories      repositories.VotingRepository
+	repositories      repositories.IVotingRepository
 	config            *config.Config
 	requestRegulation *regulation.Request
 }
 
-func NewService(repos repositories.VotingRepository, conf *config.Config, requestRegulation *regulation.Request) *Service {
+func NewService(repos repositories.IVotingRepository, conf *config.Config, requestRegulation *regulation.Request) *Service {
 	return &Service{repos, conf, requestRegulation}
 }

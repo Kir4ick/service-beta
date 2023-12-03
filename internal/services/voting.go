@@ -81,7 +81,8 @@ func (s *Service) formRequestDataForSend(ctx *context.Context, votingId string) 
 
 	arrayResult := []request.VotingResult{}
 
-	for _, voteEntity := range result {
+	for res, voteEntity := range result {
+		log.Print(res, voteEntity)
 		voteResult := request.VotingResult{Count: voteEntity.Count, OptionId: voteEntity.OptionId}
 		arrayResult = append(arrayResult, voteResult)
 	}

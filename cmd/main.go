@@ -21,8 +21,11 @@ func main() {
 	}
 
 	databaseConfig := config.DatabaseConfig{
-		Host: envReader.Get("DB_HOST"),
-		Port: envReader.Get("DB_PORT"),
+		Host:     envReader.Get("DB_HOST"),
+		Port:     envReader.Get("DB_PORT"),
+		Name:     envReader.Get("DB_NAME"),
+		User:     envReader.Get("DB_USER"),
+		Password: envReader.Get("DB_PASSWORD"),
 	}
 
 	conf := config.NewConfig(&serverConfig, &databaseConfig).SetGammaUrl(
@@ -33,8 +36,9 @@ func main() {
 
 	requestRegulation := regulation.NewRequestRegulation()
 	databaseConnect := database.Connection(&databaseConfig, &ctx)
-	var repositories repository.VotingRepository = repository.NewRepository(databaseConnect)
-	var services service.IService = service.NewService(repositories, conf, requestRegulation)
+	var repositories = repository.NewRepository(databaseConnect, databaseConfig)
+	var voteRepository repository.IVotingRepository = repository.NewVotingRepository(repositories)
+	var services service.IService = service.NewService(voteRepository, conf, requestRegulation)
 	handlers := handler.NewHandler(services, &ctx)
 
 	go func() {

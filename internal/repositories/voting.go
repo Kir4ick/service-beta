@@ -7,17 +7,17 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func (rep *Repository) InsertVoteInVoting(ctx *context.Context, vote entity.Vote, votingId string) (string, error) {
+func (rep *VotingRepository) InsertVoteInVoting(ctx *context.Context, vote entity.Vote, votingId string) (string, error) {
 	filter := bson.D{{"voting_id", votingId}}
 	push := bson.D{{"$push", bson.M{"votes": vote}}}
-	_, err := rep.database.Collection("vote").UpdateOne(*ctx, filter, push)
+	_, err := rep.collection.UpdateOne(*ctx, filter, push)
 	return votingId, err
 }
 
-func (rep *Repository) FindVoting(ctx *context.Context, votingId string) (*entity.Voting, error) {
+func (rep *VotingRepository) FindVoting(ctx *context.Context, votingId string) (*entity.Voting, error) {
 	filter := bson.D{{"voting_id", votingId}}
 	var ent entity.Voting
-	err := rep.database.Collection("vote").FindOne(*ctx, filter).Decode(&ent)
+	err := rep.collection.FindOne(*ctx, filter).Decode(&ent)
 
 	if err == mongo.ErrNoDocuments {
 		return nil, err
@@ -26,12 +26,12 @@ func (rep *Repository) FindVoting(ctx *context.Context, votingId string) (*entit
 	return &ent, err
 }
 
-func (rep *Repository) InsertNewVoting(ctx *context.Context, vote *entity.Voting) (string, error) {
-	_, err := rep.database.Collection("vote").InsertOne(*ctx, vote)
+func (rep *VotingRepository) InsertNewVoting(ctx *context.Context, vote *entity.Voting) (string, error) {
+	_, err := rep.collection.InsertOne(*ctx, vote)
 	return vote.VotingId, err
 }
 
-func (rep *Repository) GetVotingCountVotes(ctx *context.Context, votingId string) ([]entity.VotesStateCount, error) {
+func (rep *VotingRepository) GetVotingCountVotes(ctx *context.Context, votingId string) ([]entity.VotesStateCount, error) {
 
 	function := bson.A{
 		bson.D{{"$match", bson.D{{"voting_id", votingId}}}},
@@ -46,7 +46,7 @@ func (rep *Repository) GetVotingCountVotes(ctx *context.Context, votingId string
 		},
 	}
 
-	result, err := rep.database.Collection("vote").Aggregate(*ctx, function)
+	result, err := rep.collection.Aggregate(*ctx, function)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (rep *Repository) GetVotingCountVotes(ctx *context.Context, votingId string
 	return resultArray, err
 }
 
-func (rep *Repository) GetVotesStates(ctx *context.Context, votingId string) ([]entity.VotesStatePercents, error) {
+func (rep *VotingRepository) GetVotesStates(ctx *context.Context, votingId string) ([]entity.VotesStatePercents, error) {
 
 	aggregate := bson.A{
 		bson.D{{"$match", bson.D{{"voting_id", votingId}}}},
@@ -116,7 +116,7 @@ func (rep *Repository) GetVotesStates(ctx *context.Context, votingId string) ([]
 		},
 	}
 
-	result, err := rep.database.Collection("vote").Aggregate(*ctx, aggregate)
+	result, err := rep.collection.Aggregate(*ctx, aggregate)
 
 	if err == mongo.ErrNoDocuments {
 		return nil, nil
